@@ -1,0 +1,247 @@
+function getRandomInt(min, max){
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min; 
+}
+
+//Создание корабля на поле
+function create_ship(ship, numRow, numCol, size){
+	'use strict';
+	let variant = getRandomInt(1,2);
+	if(variant == 1){
+		if((numRow + (size-1)) < 10){
+			for(let i = 0; i < size; i++){
+				ship.push(String(numRow+i) + String(numCol));
+			}
+			for(let i = 0; i < size; i++){
+				ship.push(String(numRow+i) + String(numCol+1));
+				ship.push(String(numRow+i) + String(numCol-1));
+				if(i == 0){
+					ship.push(String((numRow+i)-1) + String(numCol+1));
+					ship.push(String((numRow+i)-1) + String(numCol-1));
+					ship.push(String((numRow+i)-1) + String(numCol));
+					if(size == 1){
+						ship.push(String((numRow+i)+1) + String(numCol+1));
+						ship.push(String((numRow+i)+1) + String(numCol-1));
+						ship.push(String((numRow+i)+1) + String(numCol));
+					}
+				}
+				else if(i == size - 1){
+					ship.push(String((numRow+i)+1) + String(numCol+1));
+					ship.push(String((numRow+i)+1) + String(numCol-1));
+					ship.push(String((numRow+i)+1) + String(numCol));
+				}
+			}
+		} else{
+			for(let i = 0; i < size; i++){
+				ship.push(String(numRow-i) + String(numCol));
+			}
+			for(let i = 0; i < size; i++){
+				ship.push(String(numRow-i) + String(numCol+1));
+				ship.push(String(numRow-i) + String(numCol-1));
+				if(i == 0){
+					ship.push(String((numRow-i)+1) + String(numCol+1));
+					ship.push(String((numRow-i)+1) + String(numCol-1));
+					ship.push(String((numRow-i)+1) + String(numCol));
+					if(size == 1){
+						ship.push(String((numRow-i)-1) + String(numCol+1));
+						ship.push(String((numRow-i)-1) + String(numCol-1));
+						ship.push(String((numRow-i)-1) + String(numCol));
+					}
+				}
+				else if(i == size - 1){
+					ship.push(String((numRow-i)-1) + String(numCol+1));
+					ship.push(String((numRow-i)-1) + String(numCol-1));
+					ship.push(String((numRow-i)-1) + String(numCol));
+				}
+			}
+		}
+	} else{
+		if((numCol + (size-1)) < 10){
+			for(let i = 0; i < size; i++){
+				ship.push(String(numRow) + String(numCol+i));
+			}
+			for(let i = 0; i < size; i++){
+				ship.push(String(numRow+1) + String(numCol+i));
+				ship.push(String(numRow-1) + String(numCol+i));
+				if(i == 0){
+					ship.push(String(numRow+1) + String((numCol+i)-1));
+					ship.push(String(numRow-1) + String((numCol+i)-1));
+					ship.push(String(numRow) + String((numCol+i)-1));
+					if(size == 1){
+						ship.push(String(numRow+1) + String((numCol+i)+1));
+						ship.push(String(numRow-1) + String((numCol+i)+1));
+						ship.push(String(numRow) + String((numCol+i)+1));
+					}
+				}
+				else if(i == size - 1){
+					ship.push(String(numRow+1) + String((numCol+i)+1));
+					ship.push(String(numRow-1) + String((numCol+i)+1));
+					ship.push(String(numRow) + String((numCol+i)+1));
+				}
+			}
+		} else{
+			for(let i = 0; i < size; i++){
+				ship.push(String(numRow) + String(numCol-i));
+			}
+			for(let i = 0; i < size; i++){
+				ship.push(String(numRow+1) + String(numCol+i));
+				ship.push(String(numRow-1) + String(numCol+i));
+				if(i == 0){
+					ship.push(String(numRow+1) + String((numCol-i)+1));
+					ship.push(String(numRow-1) + String((numCol-i)+1));
+					ship.push(String(numRow) + String((numCol-i)+1));
+					if(size == 1){
+						ship.push(String(numRow+1) + String((numCol-i)-1));
+						ship.push(String(numRow-1) + String((numCol-i)-1));
+						ship.push(String(numRow) + String((numCol-i)-1));
+					}
+				}
+				else if(i == size - 1){
+					ship.push(String(numRow+1) + String((numCol-i)-1));
+					ship.push(String(numRow-1) + String((numCol-i)-1));
+					ship.push(String(numRow) + String((numCol-i)-1));
+				}
+			}
+		}
+	}
+}
+
+//Проверка наложения объектов 
+function chekingOverlapsObjects(shipSize, size, N_cell, rep, ship_total){ //N_cell - кол-во ячеек, занимаемых кораблем вместе с окр. пространством
+	'use strict';
+	let repeat = true, count_shipSize = 0;
+	cycl: while(repeat){
+		let numRow_cycl = getRandomInt(1, 10);
+		let numCol_cycl = getRandomInt(1, 10);
+		create_ship(shipSize, numRow_cycl, numCol_cycl, size);
+		if(count_shipSize > 0){
+			for(let i = N_cell*count_shipSize; i < shipSize.length; i++){
+				for(let j = 0; j < shipSize.length - N_cell; j++){
+					if(shipSize[i] == shipSize[j]){
+						shipSize.length = shipSize.length - N_cell;
+						continue cycl;
+					}
+				}
+			}
+		}
+		for(let i = count_shipSize*N_cell; i < shipSize.length; i++){
+			for(let j = 0; j < ship_total.length; j++){
+				if(shipSize[i] == ship_total[j]){
+					shipSize.length = shipSize.length - N_cell;
+					continue cycl;
+				}
+			}
+		}
+		count_shipSize++;
+		if(count_shipSize == rep) repeat = false;
+	}
+}
+
+/*function variant(){
+	"use strict";
+	let playerVar = event.target;
+	let count = 0, countRed = 0;
+	for(let i = 0; i < ships.length; i++){
+		if(playerVar == document.getElementById(ships[i])){
+			playerVar.style.borderRadius = "50px";
+			playerVar.style.backgroundColor = "red";
+			playerVar.style.transition = "2s";
+			count++;
+			countRed++;
+			if(count == ships.length) alert("Ты выиграл!");
+		}
+	}
+	if(countRed == 1) countRed--;
+	else{
+		for(let i = 1; i <= 10; i++){
+			for(let j = 1; j <= 10; j++){
+				if(playerVar == document.getElementById(String(i)+String(j))){
+					playerVar.style.backgroundColor = "white";
+					playerVar.style.transition = "0.25s";
+					playerVar.addEventListener("mouseover", () => playerVar.style.transition = "0.25s");
+				}
+			}
+		}
+	}
+}*/
+
+
+let numRow = getRandomInt(1, 10);
+let numCol = getRandomInt(1, 10);
+let shipSize3 = [], shipSize2 = [], shipSize1 = [], ships = [];
+let repeat = true, count_shipSize2 = 0, N = 12, count_shipSize1 = 0, count_ships;
+
+create_ship(shipSize3, numRow, numCol, 3);						//Создаю 3-ех рядный корабль(1 шт.)
+chekingOverlapsObjects(shipSize2, 2, 12, 2, shipSize3);			//Создаю 2-ух рядные корабли(2 шт.)
+let ship_total = shipSize3.concat(shipSize2);
+chekingOverlapsObjects(shipSize1, 1, 9, 3, ship_total);			//Создаю 1-но рядные корабли(3 шт.)
+for(let i = 0; i < 3; i++){										//Созданные корабли имеют окр. область
+	ships.push(shipSize3[i]);
+}
+for(let i = 0; i < (12*1+11); i = i + 12){
+	ships.push(shipSize2[i]);
+	ships.push(shipSize2[i+1]);
+}
+for(let i = 0; i < (9*2+8); i = i + 9){
+	ships.push(shipSize1[i]);									//Помещаю в массив корабли, не учитывая окр. область
+}
+
+startGame.onclick = function(){
+	"use strict";
+	let count = 0, countRed = 0;
+	let ans_numRow = prompt("Введите ряд:");
+	let ans_numCol = prompt("Введите колонку:");
+	if(ans_numCol == "" || ans_numRow == ""){
+		if(ans_numCol == "" && ans_numRow == ""){
+			for(let i = 0; i < ships.length; i++){
+				let shipCell = document.getElementById(ships[i]);
+				shipCell.style.transition = "1s";
+				shipCell.style.borderRadius = "50px";
+				shipCell.style.backgroundColor = "red";
+			}
+		}
+	} else if(ans_numCol != "0" && ans_numRow != "0"){ 
+		for(let i = 0; i < ships.length; i++){
+			if(String(ans_numRow) + String(ans_numCol) == ships[i]){
+				let shipCell = document.getElementById(ships[i]);
+				shipCell.style.borderRadius = "50px";
+				shipCell.style.backgroundColor = "red";
+				shipCell.style.transition = "2s";
+				count++;
+				countRed++;
+				if(count == 1) alert("Ты выиграл!");
+			}
+		}
+		if(countRed == 1) countRed--;
+		else{
+			let ans_shipCell = document.getElementById(String(ans_numRow) + String(ans_numCol));
+			ans_shipCell.style.backgroundColor = "white";
+			ans_shipCell.style.transition = "1s";
+			ans_shipCell.addEventListener("mouseover", () => ans_shipCell.style.transition = "0.25s");
+		}
+	}
+}
+
+/*--------------------------------------------------------------------------------------------*/
+
+//Стили для боковых символов
+for(let i = 1; i <= 10; i++){
+	document.getElementById(String(i)+"0").style.color = "white";
+	document.getElementById(String(i)+"0").style.textAlign = "center";
+	document.getElementById(String(i)+"0").style.padding = "10px 0px;";
+	document.getElementById(String(i)+"0").style.fontSize = "20px";
+	document.getElementById(String(i)+"0").style.textShadow = "2px 1px 1px #000";
+}
+for(let i = 1; i <= 10; i++){
+	for(let j = 1; j <= 10; j++){
+		document.getElementById(String(i)+String(j)).style.backgroundColor = "black";
+		document.getElementById(String(i)+String(j)).style.border = "2px solid white";
+		document.getElementById(String(i)+String(j)).style.borderRadius = "10px";	
+		document.getElementById(String(i)+String(j)).addEventListener("mouseover", 
+			() => document.getElementById(String(i)+String(j)).style.transform = "scale(1.1)");
+		document.getElementById(String(i)+String(j)).addEventListener("mouseout", 
+			() => document.getElementById(String(i)+String(j)).style.transform = "scale(1)");
+		document.getElementById(String(i)+String(j)).style.transition = "0.25s";
+	}
+}
